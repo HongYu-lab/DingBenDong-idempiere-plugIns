@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Process
+Bundle-SymbolicName: org.myfoodplugin.process
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.adempiere.base;bundle-version="11.0.0",
+ org.adempiere.base.process;bundle-version="11.0.0",
+ org.myfoodplugin.model;bundle-version="1.0.0"
+Automatic-Module-Name: org.myfoodplugin.process
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Service-Component: OSGI-INFO/myProcessFactory.xml

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Callout
+Bundle-SymbolicName: org.myfoodplugin.callout
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.adempiere.base;bundle-version="11.0.0"
+Automatic-Module-Name: org.myfoodplugin.callout
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Service-Component: OSGI-INFO/myFoodCalloutFactory.xml
