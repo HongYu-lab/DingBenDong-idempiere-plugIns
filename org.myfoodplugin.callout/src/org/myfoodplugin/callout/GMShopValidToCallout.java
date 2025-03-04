@@ -45,7 +45,7 @@ public class GMShopValidToCallout implements IColumnCallout {
 		LocalDate today = LocalDate.now();
 		// 設定時間為
 		LocalDateTime morning930 = LocalDateTime.of(today, LocalTime.of(9, 30));
-		LocalDateTime afternoon1530 = LocalDateTime.of(today, LocalTime.of(15, 30));
+		LocalDateTime afternoon1530 = LocalDateTime.of(today, LocalTime.of(15, 25));
 		Timestamp lunchtime = Timestamp.valueOf(morning930);
 		Timestamp dinnertime = Timestamp.valueOf(afternoon1530);
 

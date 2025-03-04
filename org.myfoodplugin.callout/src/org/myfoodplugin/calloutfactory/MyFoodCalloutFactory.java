@@ -30,7 +30,6 @@ public class MyFoodCalloutFactory implements IColumnCalloutFactory {
 		if (tableName.equalsIgnoreCase("GM_Shop") && (columnName.indexOf("GM_MealType_ID") >= 0))
 			list.add(new GMShopValidToCallout());// 找剛剛所建立的class
 		
-		
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 

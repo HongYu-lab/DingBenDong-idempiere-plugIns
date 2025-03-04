@@ -52,42 +52,42 @@ public class MFCOrderLine extends X_FC_OrderLine {
 
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
-	    Timestamp now = new Timestamp(System.currentTimeMillis());
-	    int orderId = getFC_Order_ID();
+		Timestamp now = new Timestamp(System.currentTimeMillis());
+		int orderId = getFC_Order_ID();
 
-	    // 取得 GM 管理員的 User ID
-	    int gmUserId = MSysConfig.getIntValue("GM_ADMIN_USER_ID", 100, getAD_Client_ID());
-	    int adUserId = Env.getAD_User_ID(getCtx());
+		// 取得 GM 管理員的 User ID
+		int gmUserId = MSysConfig.getIntValue("GM_ADMIN_USER_ID", 100, getAD_Client_ID());
+		int iTUserId = MSysConfig.getIntValue("GM_IT_USER_ID", 101, getAD_Client_ID());
+		int adUserId = Env.getAD_User_ID(getCtx());
 
-	    // 查詢 ValidTo
-	    String getValidToSql = "SELECT ValidTo FROM FC_Order WHERE FC_Order_ID = ?";
-	    Timestamp validTo = DB.getSQLValueTS(get_TrxName(), getValidToSql, orderId);
+		// 查詢 ValidTo
+		String getValidToSql = "SELECT ValidTo FROM FC_Order WHERE FC_Order_ID = ?";
+		Timestamp validTo = DB.getSQLValueTS(get_TrxName(), getValidToSql, orderId);
 
-	    if (validTo != null) {
-	        // 計算 validTo 隔天凌晨 00:00
-	        Calendar cal = Calendar.getInstance();
-	        cal.setTime(validTo);
-	        cal.add(Calendar.DAY_OF_MONTH, 1);
-	        cal.set(Calendar.HOUR_OF_DAY, 0);
-	        cal.set(Calendar.MINUTE, 0);
-	        cal.set(Calendar.SECOND, 0);
-	        cal.set(Calendar.MILLISECOND, 0);
-	        Timestamp validToNextDayMidnight = new Timestamp(cal.getTimeInMillis());
+		if (validTo != null) {
+			// 計算 validTo 隔天凌晨 00:00
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(validTo);
+			cal.add(Calendar.DAY_OF_MONTH, 1);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			Timestamp validToNextDayMidnight = new Timestamp(cal.getTimeInMillis());
 
-	        // 一般使用者無法修改超過 validTo 的訂單
-	        if (now.after(validTo)) {
-	            if (gmUserId == adUserId && now.before(validToNextDayMidnight)) {
+			// 一般使用者無法修改超過 validTo 的訂單
+			if (now.after(validTo)) {
+				if ((gmUserId == adUserId || iTUserId == adUserId) && now.before(validToNextDayMidnight)) {
 //	                log.warning("管理員 " + adUserId + " 在有效期限後的隔天凌晨 00:00 前修改了訂單。");
-	            } else {
-	                log.saveError("Error", "此次訂餐時間已過，無法修改與新增！ 有效期限：" + validTo);
-	                return false; // 禁止儲存
-	            }
-	        }
-	    }
+				} else {
+					log.saveError("Error", "此次訂餐時間已過，無法修改與新增！ 有效期限：" + validTo);
+					return false; // 禁止儲存
+				}
+			}
+		}
 
-	    return super.beforeSave(newRecord);
+		return super.beforeSave(newRecord);
 	}
-
 
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {

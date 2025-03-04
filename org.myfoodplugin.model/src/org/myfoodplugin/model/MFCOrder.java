@@ -48,6 +48,7 @@ public class MFCOrder extends X_FC_Order {
 	@Override
 	protected boolean beforeDelete() {
 		    int gmUserId = MSysConfig.getIntValue("GM_ADMIN_USER_ID", 100, getAD_Client_ID());
+		    int iTUserId = MSysConfig.getIntValue("GM_IT_USER_ID", 101, getAD_Client_ID());
 		    int adUserId = Env.getAD_User_ID(getCtx());
 		    Timestamp now = new Timestamp(System.currentTimeMillis());
 		    int userId = getAD_User_ID();
@@ -75,7 +76,7 @@ public class MFCOrder extends X_FC_Order {
 
 		        // 檢查刪除條件
 		        if (now.after(validTo)) {
-		            if (gmUserId == adUserId && now.before(validToNextDayMidnight)) {
+		            if ((gmUserId == adUserId || iTUserId == adUserId) && now.before(validToNextDayMidnight)) {
 		                log.warning("管理員 " + adUserId + " 在有效期限後的隔天凌晨 00:00 前刪除了記錄。");
 		            } else {
 		                log.saveError("Error", "此次訂單已鎖定，無法刪除！ 有效期限：" + validTo);
@@ -104,6 +105,7 @@ public class MFCOrder extends X_FC_Order {
 
 	    // 取得 GM 管理員的 User ID
 	    int gmUserId = MSysConfig.getIntValue("GM_ADMIN_USER_ID", 100, getAD_Client_ID());
+	    int iTUserId = MSysConfig.getIntValue("GM_IT_USER_ID", 101, getAD_Client_ID());
 	    int adUserId = Env.getAD_User_ID(getCtx());
 
 	    if (validTo != null) {
@@ -119,7 +121,7 @@ public class MFCOrder extends X_FC_Order {
 
 	        // 檢查是否允許儲存
 	        if (now.after(validTo)) {
-	            if (gmUserId == adUserId && now.before(validToNextDayMidnight)) {
+	            if ((gmUserId == adUserId || iTUserId == adUserId) && now.before(validToNextDayMidnight)) {
 //	                log.warning("管理員 " + adUserId + " 在有效期限後的隔天凌晨 00:00 前新增/修改了訂單。");
 	            } else {
 	                log.saveError("Error", "此次訂餐時間已過，無法修改與新增！ 有效期限：" + validTo);
